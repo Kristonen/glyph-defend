@@ -1,5 +1,6 @@
 package main
 
+import "core:fmt"
 import rl "vendor:raylib"
 
 // draw_buildings :: proc(){
@@ -15,6 +16,17 @@ draw_spots :: proc(){
         dest_rec := rl.Rectangle{f32(k.x), f32(k.y), 50, 50}
         tex := get_texture(v.type)
         rl.DrawTexturePro(tex^, src_rec, dest_rec, {}, 0, color)
+
+        if data, ok := v.data.(Build_Data); ok{
+            progress := data.build_timer/get_building_time(v.type)
+            rec := rl.Rectangle{
+                x = f32(k.x),
+                y = f32(k.y),
+                width = dest_rec.width,
+                height = dest_rec.height*progress
+            }
+            rl.DrawRectangleRec(rec, {0, 0, 0, 100})
+        }
     }
 }
 

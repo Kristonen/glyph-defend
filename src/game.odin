@@ -13,26 +13,6 @@ Grid_Position :: struct{
     y : int,
 }
 
-Spot_Type :: enum{
-    Free, HQ, Energy, Test
-}
-
-Building :: struct{
-    type : Spot_Type,
-    hp : int,
-    max_hp : int,
-}
-
-Build_Spot_State :: enum{
-    None, Hovered, Clicking, Clicked
-}
-
-Spot :: struct{
-    type : Spot_Type,
-    building : Building,
-    state : Build_Spot_State,
-}
-
 Texture_Manager :: struct{
     hq_text : rl.Texture2D,
     free_text : rl.Texture2D,

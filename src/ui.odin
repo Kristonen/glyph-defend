@@ -18,7 +18,7 @@ Build_Menu :: struct{
     state : UI_State,
     selection : [Spot_Type]Building_Select_Spot,
     hovered : ^Building_Select_Spot,
-    gird_pos : Grid_Position,
+    spot_pos : Grid_Position,
     show_timer : f32,
     active : bool,
 }

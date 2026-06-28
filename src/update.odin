@@ -33,7 +33,7 @@ update_build_menu :: proc(){
     if game.input.released[.Build] && game.build_menu.state == .Hidding{
         game.build_menu.state = .Showing
         game.build_menu.show_timer = SHOW_MENU_TIME
-        game.build_menu.gird_pos = game.last_clicked_pos
+        game.build_menu.spot_pos = game.last_clicked_pos
     }
     // game.build_menu.gird_pos = game.last_clicked_pos
 
@@ -64,8 +64,11 @@ update_build_selection_spot :: proc(){
         pos.x += 64 + 15
 
         if selection.state == .Clicked{
-            spot := &game.spots[game.build_menu.gird_pos]
+            spot := &game.spots[game.build_menu.spot_pos]
             spot.type = type
+            spot.data = Build_Data{
+                build_timer = get_building_time(type)
+            }//get_building_data(type)
             game.build_menu.active = false
             game.build_menu.state = .Hidding
             selection.state = .Showing
@@ -74,7 +77,7 @@ update_build_selection_spot :: proc(){
 }
 
 update_free_spots :: proc(){
-    for k, v in game.spots{
+    for k, &v in game.spots{
         if v.type == .Free do continue
         north : Grid_Position = {k.x, k.y - 64}
         south : Grid_Position = {k.x, k.y + 64}
@@ -85,6 +88,15 @@ update_free_spots :: proc(){
         update_free_spot(south)
         update_free_spot(east)
         update_free_spot(west)
+
+        if data, ok := &v.data.(Build_Data); ok{
+            if data.build_timer > 0{
+                data.build_timer -= game.dt
+            } else{
+                set_type_data(&v)
+            }
+            
+        }
     }
 }
 
