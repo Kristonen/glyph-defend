@@ -1,5 +1,6 @@
 package main
 
+import "core:strings"
 import "core:fmt"
 import rl "vendor:raylib"
 
@@ -57,4 +58,26 @@ draw_build_menu :: proc(){
         // pos.x += 15 + 64
     }
     
+}
+
+draw_hovered_info :: proc(){
+    for k, v in game.spots{
+        if v.state != .Hovered do continue
+        if v.type == .Free do continue
+        x := f32(rl.GetScreenWidth()) * 0.80
+        rec := rl.Rectangle{
+            x = x,
+            y = 50,
+            width = f32(rl.GetScreenWidth()) - x - 10,
+            height = 20,
+        }
+        name := strings.clone_to_cstring(get_building_name(v.type))
+        defer delete(name)
+        rl.DrawText(name, i32(x + 50), 25, 20, rl.WHITE)
+        bar := create_progress_bar(rec, v.building.hp, v.building.max_hp)
+        rl.DrawRectangleRec(rec, rl.GRAY)
+        rec.width *= v.building.hp/v.building.max_hp
+        rl.DrawRectangleRec(rec, rl.RED)
+        
+    }
 }

@@ -17,6 +17,7 @@ Texture_Manager :: struct{
     hq_text : rl.Texture2D,
     free_text : rl.Texture2D,
     energy_text : rl.Texture2D,
+    food_text : rl.Texture2D,
 }
 
 Game :: struct{
@@ -43,6 +44,8 @@ get_texture :: proc(type : Spot_Type) -> ^rl.Texture2D{
             texture = &texture_Manager.hq_text
         case .Energy:
             texture = &texture_Manager.energy_text
+        case .Food:
+            texture = &texture_Manager.food_text
         case .Test:
     }
     return texture

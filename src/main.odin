@@ -33,6 +33,10 @@ main :: proc(){
 
     game.spots[{0, 0}] = {
         type = .HQ,
+        building = {
+            hp = 100,
+            max_hp = 100,
+        }
     }
     game.camera = {
         zoom = 1,
@@ -56,6 +60,7 @@ main :: proc(){
         draw_game()
         rl.EndMode2D()
         draw_build_menu()
+        draw_hovered_info()
         rl.DrawFPS(20, 20)
         rl.EndDrawing()
     }

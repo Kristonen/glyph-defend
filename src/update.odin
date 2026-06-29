@@ -69,6 +69,7 @@ update_build_selection_spot :: proc(){
             spot.data = Build_Data{
                 build_timer = get_building_time(type)
             }//get_building_data(type)
+            spot.building.max_hp = get_building_max_hp(type)
             game.build_menu.active = false
             game.build_menu.state = .Hidding
             selection.state = .Showing
@@ -92,6 +93,11 @@ update_free_spots :: proc(){
         if data, ok := &v.data.(Build_Data); ok{
             if data.build_timer > 0{
                 data.build_timer -= game.dt
+                max_hp := get_building_max_hp(v.type)
+                build_time := get_building_time(v.type)
+                progress := 1.0-(data.build_timer/build_time)
+                v.building.hp = max_hp*progress
+
             } else{
                 set_type_data(&v)
             }
