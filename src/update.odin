@@ -35,7 +35,6 @@ update_build_menu :: proc(){
         game.build_menu.show_timer = SHOW_MENU_TIME
         game.build_menu.spot_pos = game.last_clicked_pos
     }
-    // game.build_menu.gird_pos = game.last_clicked_pos
 
     if game.build_menu.show_timer > 0{
         progress := 1.0 - game.build_menu.show_timer/SHOW_MENU_TIME
@@ -56,7 +55,7 @@ update_build_menu :: proc(){
 update_build_selection_spot :: proc(){
     pos := rl.Vector2{game.build_menu.pos.x, game.build_menu.pos.y}
     for type in Spot_Type{
-        if type == .Free || type == .Test do continue
+        if type == .Free || type == .Test || type == .HQ do continue
         selection := &game.build_menu.selection[type]
         selection.pos.x = pos.x + 15
         selection.pos.y = pos.y + 15
@@ -70,6 +69,7 @@ update_build_selection_spot :: proc(){
                 build_timer = get_building_time(type)
             }//get_building_data(type)
             spot.building.max_hp = get_building_max_hp(type)
+            spot.building.state = .Building
             game.build_menu.active = false
             game.build_menu.state = .Hidding
             selection.state = .Showing
@@ -90,6 +90,12 @@ update_free_spots :: proc(){
         update_free_spot(east)
         update_free_spot(west)
 
+        // if game.input.released[.Build] || !game.build_menu.active{
+        //     game.build_menu.state = .Showing
+        //     game.build_menu.show_timer = SHOW_MENU_TIME
+        //     game.build_menu.spot_pos = game.last_clicked_pos
+        // }
+
         if data, ok := &v.data.(Build_Data); ok{
             if data.build_timer > 0{
                 data.build_timer -= game.dt
@@ -100,6 +106,7 @@ update_free_spots :: proc(){
 
             } else{
                 set_type_data(&v)
+                v.building.state = .Builded
             }
             
         }

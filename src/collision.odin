@@ -10,11 +10,9 @@ check_collision_building_spot :: proc(){
         old_spot.state = .None
     }
 
-    mouse_world := rl.GetScreenToWorld2D(rl.GetMousePosition(), game.camera)
-
     current_pos := game.input.mouse_grid_snap
 
-    if game.build_menu.active && game.build_menu.state != .Hovered && game.input.released[.Build]{
+    if game.build_menu.active && game.build_menu.state != .Hovered && game.input.released[.Build] && !game.was_dragging_this_frame{
         game.build_menu.active = false
         game.build_menu.state = .Hidding
     }
@@ -30,6 +28,7 @@ check_collision_building_spot :: proc(){
             current_spot.state = .Clicked
             game.last_clicked_pos = current_pos
         } else{
+            if game.build_menu.state == .Hovered do return
             if game.build_menu.hovered != nil do return
             current_spot.state = .Hovered
         }

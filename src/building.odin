@@ -12,8 +12,13 @@ Spot_Type :: enum{
     Free, HQ, Energy, Food, Test
 }
 
+Building_State :: enum{
+    Builded, Building, Upgrading
+}
+
 Building :: struct{
     type : Spot_Type,
+    state : Building_State,
     hp : f32,
     max_hp : f32,
 }

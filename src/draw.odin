@@ -33,6 +33,7 @@ draw_spots :: proc(){
 
 draw_build_menu :: proc(){
     if game.build_menu.state == .Hidding do return
+    // if !game.build_menu.active do return
     rec := rl.Rectangle{
         x = game.build_menu.pos.x,
         y = game.build_menu.pos.y,
@@ -43,17 +44,20 @@ draw_build_menu :: proc(){
     start := rl.Vector2{0, game.build_menu.pos.y}
     end := rl.Vector2{f32(rl.GetScreenWidth()), game.build_menu.pos.y}
     rl.DrawLineEx(start, end, 5, rl.RED)
+    rec.y += 2.5
+    rl.DrawRectangleRec(rec, {100, 100, 100, 100})
     pos := rl.Vector2{game.build_menu.pos.x + 15, game.build_menu.pos.y + 15}
     for i in 0..<len(Spot_Type){
         type := Spot_Type(i)
-        if type == .Free do continue
-        if type == .Test do continue
-        width := rl.MeasureText("Test", 10)
+        if type == .Free || type == .Test || type == .HQ do continue
+        name := strings.clone_to_cstring(get_building_name(type))
+        defer delete(name)
+        width := rl.MeasureText(name, 10)/2
         selection := game.build_menu.selection[type]
         tex := get_texture(type)
         color := selection.state == .Hovered ? rl.RED : rl.WHITE
         rl.DrawTextureV(tex^, selection.pos, color)
-        rl.DrawText("Test", i32(selection.pos.x) + width, i32(selection.pos.y) + tex.height + 5, 10, rl.WHITE)
+        rl.DrawText(name, i32(selection.pos.x) + width, i32(selection.pos.y) + tex.height + 5, 10, rl.WHITE)
 
         // pos.x += 15 + 64
     }
@@ -62,22 +66,26 @@ draw_build_menu :: proc(){
 
 draw_hovered_info :: proc(){
     for k, v in game.spots{
-        if v.state != .Hovered do continue
-        if v.type == .Free do continue
+        if v.state != .Hovered || v.type == .Free do continue
         x := f32(rl.GetScreenWidth()) * 0.80
         rec := rl.Rectangle{
             x = x,
             y = 50,
             width = f32(rl.GetScreenWidth()) - x - 10,
-            height = 20,
+            height = 30,
         }
         name := strings.clone_to_cstring(get_building_name(v.type))
         defer delete(name)
-        rl.DrawText(name, i32(x + 50), 25, 20, rl.WHITE)
+        rl.DrawText(name, i32(rec.x + rec.width/2) - 35, 25, 20, rl.WHITE)
         bar := create_progress_bar(rec, v.building.hp, v.building.max_hp)
-        rl.DrawRectangleRec(rec, rl.GRAY)
-        rec.width *= v.building.hp/v.building.max_hp
-        rl.DrawRectangleRec(rec, rl.RED)
-        
+        rl.DrawRectangleRec(rec, rl.MAROON)
+        fill_rec := rec
+        fill_rec.width *= v.building.hp/v.building.max_hp
+        rl.DrawRectangleRec(fill_rec, rl.RED)
+        rl.DrawRectangleLinesEx(rec, 5, rl.GRAY)
+        hp_show := fmt.tprintf("%0.0f/%0.0f", v.building.hp, v.building.max_hp)
+        hp_text := strings.clone_to_cstring(hp_show)
+        defer delete(hp_text)
+        rl.DrawText(hp_text, i32(rec.x + rec.width/2) - 10, i32(rec.y + rec.height/2) - 10, 20, rl.WHITE)
     }
 }
